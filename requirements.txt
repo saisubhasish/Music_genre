@@ -1,5 +1,7 @@
 pandas
-sklearn
+scikit-learn
 folium
 flask
 pymongo
+pyyaml
+dill==0.2.7.1

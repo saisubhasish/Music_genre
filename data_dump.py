@@ -1,7 +1,7 @@
 import json
 import pymongo
 import pandas as pd
-from config import mongo_client
+from music.config import mongo_client
 
 DATA_FILE_PATH="D:/FSDS-iNeuron/10.Projects-DS/Music_genre/data.csv"
 DATABASE_NAME="music"
