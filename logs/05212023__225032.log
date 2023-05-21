@@ -1,0 +1,10 @@
+[ 2023-05-21 22:50:32,441 ] 22 root - INFO - Reading data from database: music and collection: genre
+[ 2023-05-21 22:50:33,384 ] 24 root - INFO - Found columns: Index(['_id', 'filename', 'tempo', 'beats', 'chroma_stft', 'rmse',
+       'spectral_centroid', 'spectral_bandwidth', 'rolloff',
+       'zero_crossing_rate', 'mfcc1', 'mfcc2', 'mfcc3', 'mfcc4', 'mfcc5',
+       'mfcc6', 'mfcc7', 'mfcc8', 'mfcc9', 'mfcc10', 'mfcc11', 'mfcc12',
+       'mfcc13', 'mfcc14', 'mfcc15', 'mfcc16', 'mfcc17', 'mfcc18', 'mfcc19',
+       'mfcc20', 'label'],
+      dtype='object')
+[ 2023-05-21 22:50:33,384 ] 26 root - INFO - Dropping column: _id 
+[ 2023-05-21 22:50:33,385 ] 28 root - INFO - Row and columns in df: (1000, 30)
