@@ -14,7 +14,7 @@ class DataValidationArtifact:
 
 @dataclass
 class DataTransformationArtifact:
-    knn_imputer_object_path:str
+    transformation_object_path:str
     transformed_train_path:str
     transformed_test_path:str
     target_encoder_path:str
@@ -22,8 +22,7 @@ class DataTransformationArtifact:
 @dataclass
 class ModelTrainerArtifact:
     model_path:str 
-    f1_train_score:float 
-    f1_test_score:float
+    accuracy_score:float 
 
 @dataclass
 class ModelEvaluationArtifact:

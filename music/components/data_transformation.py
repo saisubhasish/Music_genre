@@ -38,6 +38,17 @@ class DataTransformation:
             return pipeline
         except Exception as e:
             raise MusicException(e, sys)
+        
+    @classmethod
+    def get_label_encoder_object(cls)->Pipeline:     # Attributes of this class will be same across all the object 
+        try:
+            label_encoder =  LabelEncoder()
+            pipeline = Pipeline(steps=[
+                    ('encoder',label_encoder)  # To handle outliers in one side of distribution
+                ])
+            return pipeline
+        except Exception as e:
+            raise MusicException(e, sys)
     
 
     def initiate_data_transformation(self,) -> artifact_entity.DataTransformationArtifact:
@@ -46,11 +57,6 @@ class DataTransformation:
             logging.info("Reading training and testing file")
             train_df = pd.read_csv(self.data_validation_artifact.train_file_path)
             test_df = pd.read_csv(self.data_validation_artifact.test_file_path)          
-
-            # Handling outlier and null value in 'age' and 'sex' column
-            logging.info("Handling outlier and null value in 'age' and 'sex' column")
-            train_df = self.handling_null_value_and_outliers(df=train_df)
-            test_df = self.handling_null_value_and_outliers(df=test_df)
             
             # Selecting input feature for train and test dataframe
             logging.info("Selecting input feature for train and test dataframe")
@@ -64,7 +70,7 @@ class DataTransformation:
 
             # Encoding the target feature values
             logging.info("Encoding the target feature values")
-            label_encoder = LabelEncoder()
+            label_encoder = self.get_label_encoder_object()
             label_encoder.fit(target_feature_train_df)
 
             # Transformation on target columns

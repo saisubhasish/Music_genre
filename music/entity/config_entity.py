@@ -3,10 +3,10 @@ from datetime import datetime
 from music.logger import logging
 from music.exception import MusicException
 
-FILE_NAME = 'thyroid.csv'
+FILE_NAME = 'music.csv'
 TRAIN_FILE_NAME = 'train.csv'
 TEST_FILE_NAME = 'test.csv'
-KNN_IMPUTER_OBJECT_FILE_NAME = "knn_imputer.pkl"
+TRANSFORMATION_OBJECT_FILE_NAME = "transformaer.pkl"
 TARGET_ENCODER_OBJECT_FILE_NAME = "target_encoder.pkl"
 MODEL_FILE_NAME = "model.pkl"
 
@@ -60,7 +60,7 @@ class DataTransformationConfig:
     def __init__(self,training_pipeline_config:TrainingPipelineConfig):
         try:
             self.data_transformation_dir = os.path.join(training_pipeline_config.artifact_dir , "data_transformation")
-            self.knn_imputer_object_path = os.path.join(self.data_transformation_dir,"imputer",KNN_IMPUTER_OBJECT_FILE_NAME)
+            self.transfer_object_path = os.path.join(self.data_transformation_dir,"imputer",TRANSFORMATION_OBJECT_FILE_NAME)
             self.transformed_train_path =  os.path.join(self.data_transformation_dir,"transformed",TRAIN_FILE_NAME.replace("csv","npz"))
             self.transformed_test_path =os.path.join(self.data_transformation_dir,"transformed",TEST_FILE_NAME.replace("csv","npz"))
             self.target_encoder_path = os.path.join(self.data_transformation_dir,"target_encoder",TARGET_ENCODER_OBJECT_FILE_NAME)
