@@ -34,14 +34,12 @@ def start_batch_prediction(input_file_path):
         logging.info(f"Reading file :{input_file_path}")
         df = pd.read_csv(input_file_path)
         base_df= pd.read_csv(base_file_path)
-        
+            
         # Validation
         logging.info("Validating input file")
         try:
             logging.info("Dropping missing value columns from current df")
             df = model_resolver.drop_missing_values_columns(df=df,report_key_name="missing_values_within_input_df")
-            logging.info("Dropping missing value columns from base df")
-            base_df = model_resolver.drop_missing_values_columns(df=base_df,report_key_name="missing_values_within_base_dataset")
 
             logging.info("Checking required columns in current df")
             current_column_status = model_resolver.is_required_columns_exists(base_df=base_df, current_df=df, report_key_name="missing_columns_within_input_dataset")
@@ -70,12 +68,12 @@ def start_batch_prediction(input_file_path):
 
         # Loading knn_imputer
         logging.info("Loading knn imputer to get dataset")
-        knn_imputer = load_object(file_path=model_resolver.get_latest_knn_imputer_path())
+        transfer = load_object(file_path=model_resolver.get_latest_save_transformer_path())
         
         # Getting input features
-        input_feature_names =  list(knn_imputer.feature_names_in_)
+        input_feature_names =  list(transfer.feature_names_in_)
         # data frame
-        input_arr = knn_imputer.transform(df[input_feature_names])
+        input_arr = transfer.transform(df[input_feature_names])
 
         # Prediction    
         logging.info("Loading model to make prediction")
@@ -89,7 +87,6 @@ def start_batch_prediction(input_file_path):
         cat_prediction = target_encoder.inverse_transform(prediction)
 
         df["prediction"]=prediction
-        df["cat_pred"]=cat_prediction
 
         logging.info('Creating prediction file with time stamp')
         # Creating file name for predition with time stamp by replacing .csv
