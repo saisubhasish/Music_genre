@@ -19,4 +19,6 @@ env_var = EnvironmentVariable()
 mongo_client = pymongo.MongoClient(env_var.mongo_db_url)
 TARGET_COLUMN = "label"
 k = 3
+database_name="music"
+collection_name="genre"
 

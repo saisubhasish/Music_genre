@@ -1,45 +1,32 @@
-import pandas as pd
-from sklearn.cluster import KMeans
-import folium
 from flask import Flask, render_template
+import folium
 from music import utils
-from data_dump import DATABASE_NAME, COLLECTION_NAME
-
-import pandas as pd
-from sklearn.cluster import KMeans
-import folium
-from flask import Flask, render_template
-from sklearn.preprocessing import OneHotEncoder, LabelEncoder
-from sklearn.preprocessing import StandardScaler
-
-from sklearn.metrics import accuracy_score
+from music.config import database_name, collection_name
 
 
 
-
-df:pd.DataFrame  = utils.get_collection_as_dataframe(
-                database_name=DATABASE_NAME, 
-                collection_name=COLLECTION_NAME)
-
-X = df.drop(['label', 'filename'], axis=1)
-
-# Encode the labels for genre
-le = LabelEncoder()
-new_labels = pd.DataFrame(le.fit_transform(df['label']))
-df['label'] = new_labels
+app = Flask(__name__)
 
 
-# Standardizing data
-scaler = StandardScaler()
-features_normalized = scaler.fit_transform(X)
+df = utils.get_collection_as_dataframe(
+                database_name = database_name, 
+                collection_name = collection_name)
 
-kmeans = KMeans(n_clusters=3)    # Building KMeans model with 3 clusters
-kmeans.fit(features_normalized)
+def create_map(df):
+    m = folium.Map(location=[df['latitude'].mean(), df['longitude'].mean()], zoom_start=12)
+    
+    # Add markers for each data point
+    for index, row in df.iterrows():
+        folium.Marker([row['latitude'], row['longitude']], popup=row['predicted_label']).add_to(m)
+    
+    return m
 
-df['predicted_label'] = kmeans.labels_
+@app.route('/')
+def show_map():
+    m = create_map(df)
+    return render_template('map.html', map=m._repr_html_())
 
 
 
-accuracy = accuracy_score(le.inverse_transform(df['label']), le.inverse_transform(df['predicted_label']))
-
-print('Accuracy of the model is: ',round(accuracy*100, 2))
+if __name__ == '__main__':
+    app.run()
