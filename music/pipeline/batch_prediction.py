@@ -3,15 +3,15 @@ import pandas as pd
 import numpy as np
 from datetime import datetime
 
-from thyroid import utils
-from thyroid.logger import logging
-from thyroid.utils import load_object
-from thyroid.config import TARGET_COLUMN
-from thyroid.entity import config_entity
-from thyroid.predictor import ModelResolver
-from thyroid.exception import ThyroidException
-from thyroid.components.data_validation import DataValidation
-from thyroid.entity.config_entity import DataValidationConfig
+from music import utils
+from music.logger import logging
+from music.utils import load_object
+from music.config import TARGET_COLUMN
+from music.entity import config_entity
+from music.predictor import ModelResolver
+from music.exception import ThyroidException
+from music.components.data_validation import DataValidation
+from music.entity.config_entity import DataValidationConfig
 
 
 PREDICTION_DIR= "prediction"
@@ -20,7 +20,7 @@ VALIDATION_DIR= "validation_report"
 validation_error=dict()
 
 
-base_file_path = os.path.join("hypothyroid.csv")
+base_file_path = os.path.join("data.csv")
 
 
 def start_batch_prediction(input_file_path):
@@ -34,9 +34,6 @@ def start_batch_prediction(input_file_path):
         logging.info(f"Reading file :{input_file_path}")
         df = pd.read_csv(input_file_path)
         base_df= pd.read_csv(base_file_path)
-        logging.info("Replace '?' value to nan in base and input df")
-        df.replace({"?":np.NAN},inplace=True)
-        base_df.replace({"?":np.NAN},inplace=True)
         
         # Validation
         logging.info("Validating input file")
