@@ -51,7 +51,7 @@ class DataValidationConfig:
             self.train_file_path = os.path.join(self.data_validation_dir,"dataset",TRAIN_FILE_NAME)
             self.test_file_path = os.path.join(self.data_validation_dir,"dataset",TEST_FILE_NAME)
             self.missing_threshold:float = 0.2
-            self.base_file_path = os.path.join("hypothyroid.csv")
+            self.base_file_path = os.path.join("data.csv")
 
         except Exception as e:
             raise MusicException(e, sys)

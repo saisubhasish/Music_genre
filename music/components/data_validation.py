@@ -1,12 +1,12 @@
 import os,sys 
 import numpy as np
 import pandas as pd
-from thyroid import utils
+from music import utils
 from typing import Optional
-from thyroid.logger import logging
-from thyroid.config import TARGET_COLUMN
-from thyroid.exception import ThyroidException
-from thyroid.entity import artifact_entity,config_entity
+from music.logger import logging
+from music.config import TARGET_COLUMN
+from music.exception import MusicException
+from music.entity import artifact_entity,config_entity
 
 
 
@@ -22,47 +22,18 @@ class DataValidation:
             self.data_ingestion_artifact=data_ingestion_artifact
             self.validation_error=dict()
         except Exception as e:
-            raise ThyroidException(e, sys)
-
-    
-
-    def drop_missing_values_columns(self,df:pd.DataFrame,report_key_name:str)->Optional[pd.DataFrame]:
-        """
-        This function will drop column which contains missing value more than specified threshold
-
-        df : Accepts a pandas dataframe
-        =========================================================================================
-        returns Pandas Dataframe if atleast a single column is available after missing columns drop else None
-        """
-        try:
-            
-            threshold = self.data_validation_config.missing_threshold
-            null_report = df.isna().sum()/df.shape[0]
-            # Selecting column name which contains null
-            logging.info(f"selecting column name which contains null above to {threshold}")
-            drop_column_names = null_report[null_report>threshold].index
-
-            logging.info(f"Columns to drop: {list(drop_column_names)}")
-            self.validation_error[report_key_name]=list(drop_column_names)
-            df.drop(list(drop_column_names),axis=1,inplace=True)
-
-            # Return None if no columns left
-            if len(df.columns)==0:
-                return None
-            return df
-        except Exception as e:
-            raise ThyroidException(e, sys)
-
+            raise MusicException(e, sys)
+        
     def drop_unnecessary_columns(self, df:pd.DataFrame, report_key_name:str)->Optional[pd.DataFrame]:
         """
         This function will drop unnecessary columns from dataframe
         
         df : Accepts a pandas dataframe
         =========================================================================================
-        returns Pandas Dataframe by dropping 'TSH measured', 'T3 measured', 'TT4 measured', 'T4U measured', 'FTI measured', 'TBG measured', 'referral source', 'query on thyroxine'
+        returns Pandas Dataframe by dropping 'label', 'filename'
         """
         try:
-            drop_columns = ['TSH measured', 'T3 measured', 'TT4 measured', 'T4U measured', 'FTI measured', 'TBG measured', 'referral source', 'query on thyroxine']
+            drop_columns = ['label', 'filename']
             logging.info(f"UnnecessaColumns dropped: {drop_columns}")
             self.validation_error[report_key_name] = drop_columns
             drop_columns = df[drop_columns]
@@ -70,8 +41,8 @@ class DataValidation:
             return df
             
         except Exception as e:
-            raise ThyroidException(e, sys)
-
+            raise MusicException(e, sys)
+        
     def is_required_columns_exists(self,base_df:pd.DataFrame,current_df:pd.DataFrame,report_key_name:str)->bool:
         """
         This function checks if required columns exists or not by comparing current df with base df and returns
@@ -94,7 +65,7 @@ class DataValidation:
             return True
             
         except Exception as e:
-            raise ThyroidException(e, sys)
+            raise MusicException(e, sys)
 
     def data_drift(self,base_df:pd.DataFrame,current_df:pd.DataFrame,report_key_name:str):
         try:
@@ -123,27 +94,17 @@ class DataValidation:
             self.validation_error[report_key_name]=drift_report
             
         except Exception as e:
-            raise ThyroidException(e, sys)
+            raise MusicException(e, sys)
 
     def initiate_data_validation(self)->artifact_entity.DataValidationArtifact:
         try:
             logging.info("Reading base dataframe")
             base_df = pd.read_csv(self.data_validation_config.base_file_path)
-            base_df.replace({"?":np.NAN},inplace=True)
-            logging.info("Replace ? value in base df")
-            #base_df has ? as null
-            logging.info("Drop null values colums from base df")
-            base_df=self.drop_missing_values_columns(df=base_df,report_key_name="missing_values_within_base_dataset")
 
             logging.info("Reading train dataframe")
             train_df = pd.read_csv(self.data_ingestion_artifact.train_file_path)
             logging.info("Reading test dataframe")
             test_df = pd.read_csv(self.data_ingestion_artifact.test_file_path)
-
-            logging.info("Drop null values colums from train df")
-            train_df = self.drop_missing_values_columns(df=train_df,report_key_name="missing_values_within_train_dataset")
-            logging.info("Drop null values colums from test df")
-            test_df = self.drop_missing_values_columns(df=test_df,report_key_name="missing_values_within_test_dataset")
 
             logging.info("Drop unnecessary columns from base df")
             base_df = self.drop_unnecessary_columns(df=base_df, report_key_name="dropping_unnecessary_columns_base_df")
@@ -185,4 +146,4 @@ class DataValidation:
             return data_validation_artifact
 
         except Exception as e:
-            raise ThyroidException(e, sys)
+            raise MusicException(e, sys)
